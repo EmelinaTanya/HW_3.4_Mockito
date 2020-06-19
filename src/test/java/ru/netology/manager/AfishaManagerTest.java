@@ -1,12 +1,24 @@
 package ru.netology.manager;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.netology.domain.MovieItem;
+import ru.netology.repository.MovieRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 
+@ExtendWith(MockitoExtension.class)
 class AfishaManagerTest {
-  AfishaManager manager = new AfishaManager();
+  @Mock
+  MovieRepository repository;
+
+  @InjectMocks
+  private AfishaManager manager;
   private MovieItem first = new MovieItem(1, 1, "Бладшот", "боевик", "http://image.com");
   private MovieItem second = new MovieItem(2, 2, "Вперёд", "мультфильм", "http://image.com");
   private MovieItem third = new MovieItem(3, 3, "Отель 'Белград'", "комедия", "http://image.com");
@@ -18,9 +30,12 @@ class AfishaManagerTest {
   private MovieItem ninth = new MovieItem(9, 9, "Аладин", "приключения", "http://image.com");
   private MovieItem tenth = new MovieItem(10, 10, "Дитя робота", "фантастика", "http://image.com");
   private MovieItem eleventh = new MovieItem(11, 11, "Движение вверх", "спорт", "http://image.com");
-  //добавление фильма
+
   @Test
   void shouldAdd() {
+    doReturn(new MovieItem[]{first}).when(repository).findAll();
+    doNothing().when(repository).save(first);
+
     MovieItem[] expected = new MovieItem[]{first};
 
     manager.add(first);
@@ -28,10 +43,30 @@ class AfishaManagerTest {
     assertArrayEquals(expected, manager.getMovies());
   }
 
-  //возвращение по умолчанию 10, даже если добавлено больше
   @Test
   void shouldReturnAllMoviesForDefault() {
+    doReturn(new MovieItem[]{first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth, eleventh}).when(repository).findAll();
+
     MovieItem[] expected = new MovieItem[]{eleventh, tenth, ninth, eighth, seventh, sixth, fifth, fourth, third, second};
+
+    assertArrayEquals(expected, manager.getMovies());
+  }
+
+  @Test
+  void shouldReturnMoviesWithMoviesToReturned() {
+    MovieItem[] moviesToReturn = {first, second, third, fourth, fifth};
+    doReturn(moviesToReturn).when(repository).findAll();
+    MovieItem[] expected = new MovieItem[]{fifth, fourth, third, second, first};
+
+    assertArrayEquals(expected, manager.getMovies());
+  }
+
+  @Test
+  void shouldReturnDefaultIfLessZero() {
+    manager = new AfishaManager(repository, -4);
+    MovieItem[] moviesToReturn = {first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth};
+    doReturn(moviesToReturn).when(repository).findAll();
+
     manager.add(first);
     manager.add(second);
     manager.add(third);
@@ -42,72 +77,45 @@ class AfishaManagerTest {
     manager.add(eighth);
     manager.add(ninth);
     manager.add(tenth);
-    manager.add(eleventh);
+
+    MovieItem[] expected = new MovieItem[]{tenth, ninth, eighth, seventh, sixth, fifth, fourth, third, second, first};
 
     assertArrayEquals(expected, manager.getMovies());
   }
 
-  //возвращение с указанным числом возврата (5)
-  @Test
-  void shouldReturnMoviesWithMoviesToReturned() {
-    AfishaManager manager = new AfishaManager(5);
-    MovieItem[] expected = new MovieItem[]{fifth, fourth, third, second, first};
-    manager.add(first);
-    manager.add(second);
-    manager.add(third);
-    manager.add(fourth);
-    manager.add(fifth);
-
-    assertArrayEquals(expected, manager.getMovies());
-  }
-
-  //вернуть пустой массив
-  @Test
-  void shouldEmptyArrayMovies() {
-    assertArrayEquals(new MovieItem[0], manager.getMovies());
-  }
-
-  //возвращение последних 4 добавленнных фильмов, даже если указано вернуть 6
-  @Test
-  void shouldReturnLastFourIfMoviesToReturnSix() {
-    AfishaManager manager = new AfishaManager(6);
-    MovieItem[] expected = new MovieItem[]{fourth, third, second, first};
-    manager.add(first);
-    manager.add(second);
-    manager.add(third);
-    manager.add(fourth);
-
-    assertArrayEquals(expected, manager.getMovies());
-  }
-
-  //после добавления фильмов, вернуть пустой массив,т.к. указано вернуть 0
   @Test
   void shouldReturnEmptyArrayIfAddMoviesAndMoviesToReturnZero() {
     manager.add(first);
     manager.add(second);
     manager.add(third);
-    AfishaManager manager = new AfishaManager(0);
+    AfishaManager manager = new AfishaManager(repository, 0);
+    MovieItem[] moviesToReturn = {};
+    doReturn(moviesToReturn).when(repository).findAll();
     MovieItem[] expected = new MovieItem[0];
 
     assertArrayEquals(expected, manager.getMovies());
   }
 
-  //возвращение фильмов по умолчанию (10), при запросе числа меньше 0
   @Test
-  void shouldReturnDefaultIfLessZero() {
-    manager = new AfishaManager(-4);
+  void shouldEmptyArrayMovies() {
+    MovieItem[] moviesToReturn = {};
+    doReturn(moviesToReturn).when(repository).findAll();
+    MovieItem[] expected = new MovieItem[0];
+    assertArrayEquals(expected, manager.getMovies());
+  }
+
+  @Test
+  void shouldReturnLastFourIfMoviesToReturnSix() {
+    AfishaManager manager = new AfishaManager(repository, 6);
     manager.add(first);
     manager.add(second);
     manager.add(third);
     manager.add(fourth);
-    manager.add(fifth);
-    manager.add(sixth);
-    manager.add(seventh);
-    manager.add(eighth);
-    manager.add(ninth);
-    manager.add(tenth);
-    MovieItem[] expected = new MovieItem[]{tenth, ninth, eighth, seventh, sixth, fifth, fourth, third, second, first};
+    MovieItem[] moviesToReturn = {first, second, third, fourth};
+    doReturn(moviesToReturn).when(repository).findAll();
+    MovieItem[] expected = new MovieItem[]{fourth, third, second, first};
 
     assertArrayEquals(expected, manager.getMovies());
   }
+
 }
