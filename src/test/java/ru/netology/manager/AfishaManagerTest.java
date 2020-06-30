@@ -6,7 +6,7 @@ import ru.netology.domain.MovieItem;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AfishaManagerTest {
-  AfishaManager manager = new AfishaManager();
+  private AfishaManager manager = new AfishaManager();
   private MovieItem first = new MovieItem(1, 1, "Бладшот", "боевик", "http://image.com");
   private MovieItem second = new MovieItem(2, 2, "Вперёд", "мультфильм", "http://image.com");
   private MovieItem third = new MovieItem(3, 3, "Отель 'Белград'", "комедия", "http://image.com");
