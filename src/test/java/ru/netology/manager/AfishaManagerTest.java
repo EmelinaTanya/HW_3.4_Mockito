@@ -15,7 +15,7 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class AfishaManagerTest {
   @Mock
-  MovieRepository repository;
+  private MovieRepository repository;
 
   @InjectMocks
   private AfishaManager manager;
