@@ -28,13 +28,14 @@ public class AfishaManager {
 
   public MovieItem[] getMovies() {
     MovieItem[] moviesFromRepo = repository.findAll();
-    int arrayLength = moviesFromRepo.length;
 
-    if (moviesToReturn <= 0) {
-      if (moviesToReturnDefault < moviesFromRepo.length) {
-        arrayLength = moviesToReturnDefault;
+    int arrayLength = moviesToReturn;
+    if (moviesToReturn <= 0)moviesToReturn=moviesFromRepo.length;
+  {
+      if (moviesFromRepo.length < arrayLength) {
+        arrayLength = moviesFromRepo.length;
       }
-    } else {
+
       if (arrayLength < moviesFromRepo.length) {
         arrayLength = moviesToReturn;
 

@@ -19,8 +19,8 @@ class AfishaManagerTest {
 
   @InjectMocks
   private AfishaManager manager;
-  private MovieItem first = new MovieItem(1, 1, "Бладшот", "боевик", "http://image.com");
-  private MovieItem second = new MovieItem(2, 2, "Вперёд", "мультфильм", "http://image.com");
+  private MovieItem first = new MovieItem (1, 1, "Бладшот", "боевик", "http://image.com");
+  private MovieItem second = new MovieItem (2, 2, "Вперёд", "мультфильм", "http://image.com");
   private MovieItem third = new MovieItem(3, 3, "Отель 'Белград'", "комедия", "http://image.com");
   private MovieItem fourth = new MovieItem(4, 4, "Джентльмены", "боевик", "http://image.com");
   private MovieItem fifth = new MovieItem(5, 5, "Человек-невидимка", "ужасы", "http://image.com");
@@ -47,7 +47,7 @@ class AfishaManagerTest {
   void shouldReturnAllMoviesForDefault() {
     doReturn(new MovieItem[]{first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth, eleventh}).when(repository).findAll();
 
-    MovieItem[] expected = new MovieItem[]{eleventh, tenth, ninth, eighth, seventh, sixth, fifth, fourth, third, second};
+    MovieItem[] expected = new MovieItem[]{eleventh, tenth, ninth, eighth, seventh, sixth, fifth, fourth, third, second,first};
 
     assertArrayEquals(expected, manager.getMovies());
   }
